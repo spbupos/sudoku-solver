@@ -57,7 +57,8 @@ def fail_in_3x3(row, col, sudoku):
                 return True
     return False
 
-def recursive_solver(sudoku):
+def recursive_solver(sudoku, log, recurse):
+    recurse += 1
     while True:
         min = None
         for r in range(9):
@@ -71,7 +72,9 @@ def recursive_solver(sudoku):
                 if avail_cnt == 0:
                     return False
                 if avail_cnt == 1:
-                    sudoku[r][c] = avail.pop()
+                    num = avail.pop()
+                    print("[recursion level", recurse, "] Placing", num, "in position (", r, ",", c, ")", file=log)
+                    sudoku[r][c] = num
                 if not min or avail_cnt < len(min[1]):
                     min = ((r, c), avail)
         if not min:
@@ -82,16 +85,22 @@ def recursive_solver(sudoku):
     for num in min[1]:
         sub_solved = deepcopy(sudoku)
         sub_solved[r][c] = num
-        if recursive_solver(sub_solved):
+        print("[recursion level", recurse, "] Trying to place", num, "in position (", r, ",", c, ")", file=log)
+        if recursive_solver(sub_solved, log, recurse):
+            print("[recursion level", recurse, "] Successfully placed", num, "in position (", r, ",", c, ")", file=log)
             for row in range(9):
                 for col in range(9):
                     sudoku[row][col] = sub_solved[row][col]
             return True
+        print("[recursion level", recurse, "] Placing", num, "in position (", r, ",", c, ") failed", file=log)
     return False
 
 def SolveSudoku(sudoku):
+    log = open("log.txt", 'w')
     result = deepcopy(sudoku)
-    if recursive_solver(result):
+    if recursive_solver(result, log, 0):
+        log.close()
         return result
+    log.close()
     return None
 

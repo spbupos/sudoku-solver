@@ -9,6 +9,7 @@ This is a simple graphic tool for automatic solving of Sudoku
 ```
 python3 ./main.py
 ```
+Solver logs his "thinking" to file ***log.txt*** in current directory
 
 ## Known issues
 On some Sudoku works very slow :(
